@@ -2,8 +2,8 @@ import os
 from PIL import Image
 
 # مسیر پوشه عکس‌ها
-input_folder = r"مسیر پوشه عکسهای تبدیل نشده"
-output_folder = r"مسیر پوشه عکسها بعد از تبدیل"
+input_folder = r"C:\Users\Meysam\Desktop\aaa"
+output_folder = r"C:\Users\Meysam\Desktop\aa"
 
 # ایجاد پوشه خروجی اگر وجود نداشت
 if not os.path.exists(output_folder):
@@ -32,7 +32,7 @@ for filename in os.listdir(input_folder):
                                      Image.Resampling.LANCZOS)
 
                 # تنظیم کیفیت برای رسیدن به حجم مناسب
-                quality = 85  # شروع کیفیت
+                quality_found = False  # پرچم برای ذخیره موفق
                 for q in range(85, 30, -5):  # کاهش کیفیت تا یافتن محدوده مناسب
                     temp_path = output_path + "_temp.webp"
                     img.save(temp_path, format="WEBP", quality=q)
@@ -42,11 +42,18 @@ for filename in os.listdir(input_folder):
                         os.rename(temp_path, output_path)
                         print(
                             f"تصویر {filename} با کیفیت {q} و حجم {file_size // 1024} کیلوبایت ذخیره شد.")
+                        quality_found = True
                         break
                     os.remove(temp_path)
-                else:
-                    print(f"تصویر {filename} حجم مناسب پیدا نکرد.")
+
+                # ذخیره با کمترین کیفیت ممکن اگر کیفیت مناسب پیدا نشد
+                if not quality_found:
+                    img.save(output_path, format="WEBP", quality=30)
+                    print(
+                        f"تصویر {filename} با کیفیت پیش‌فرض (30) ذخیره شد، اما در محدوده حجم موردنظر قرار نگرفت.")
+
         except Exception as e:
             print(f"خطا در تبدیل تصویر {filename}: {e}")
 
-print("تبدیل تصاویر به پایان رسید.")
+print("Its Done!")
+
